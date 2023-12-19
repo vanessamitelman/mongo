@@ -11,7 +11,7 @@ const app = express(); // create the server and save the ref in the app variable
 app.use(express.json());
 app.use(
   cors({
-    origin: ['http://localhost:5173']
+    origin: '*'
   })
 );
 
@@ -32,6 +32,6 @@ app.use(express.static(path.join(__dirname, '../client')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/index.html'));
 });
-app.listen(process?.env?.PORT ?? 3303, () => {
-  console.log('listening on 3303' + process?.env?.PORT ?? 3303);
+app.listen(process?.env?.PORT ?? 3302, () => {
+  console.log('listening on 3302' + process?.env?.PORT ?? 3302);
 });
