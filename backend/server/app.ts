@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { appRouter } from './trpc/index';
+import path from 'path';
 // import { insertDataPersonAndHomes } from './scripts/insertDataPersonAndHomes';
 
 // insertDataPersonAndHomes(2)
@@ -13,9 +14,7 @@ app.use(
     origin: ['http://localhost:5173']
   })
 );
-app.listen(3302, () => {
-  console.log('listening on 3302');
-});
+
 app.use(
   '/trpc',
   trpcExpress.createExpressMiddleware({
@@ -23,8 +22,16 @@ app.use(
     // createContext,
   })
 );
-app.get('/', (req, res) => {
-  res.send({
-    message: 'started my project'
-  });
+// app.get('/', (req, res) => {
+//   res.send({
+//     message: 'started my project'
+//   });
+// });
+app.use(express.static(path.join(__dirname, '../client')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/index.html'));
+});
+app.listen(process?.env?.PORT ?? 3303, () => {
+  console.log('listening on 3303' + process?.env?.PORT ?? 3303);
 });
