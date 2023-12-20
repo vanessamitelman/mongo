@@ -32,6 +32,6 @@ app.use(express.static(path.join(__dirname, '../client')));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/index.html'));
 });
-app.listen(process?.env?.PORT ?? 3302, () => {
-  console.log('listening on 3302' + process?.env?.PORT ?? 3302);
+app.listen(process?.env?.PORT ?? 3301, () => {
+  console.log('listening on 3301' + process?.env?.PORT ?? 3301);
 });
