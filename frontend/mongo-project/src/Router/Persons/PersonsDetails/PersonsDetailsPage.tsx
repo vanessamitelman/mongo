@@ -3,18 +3,21 @@ import { trpc } from '../../../trpc';
 import { useState } from 'react';
 import { Dialog } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { useAtom } from 'jotai';
+import { dialogStatusAtom } from '../../../store/jotai';
 
 export function PersonsDetailsPage() {
   const { id } = useParams();
-  const [openDialog, setOpenDialog] = useState(false);
-  const [homesArr, setHomesArr] = useState<string[]>([]);
+  const [openDialog, setOpenDialog] = useAtom(dialogStatusAtom);
   const person_query = trpc.person.get.useQuery(id ?? '');
+  const home_list_query = trpc.home.listShort.useQuery();
+
   const person_query_add_mutation = trpc.person.addHome.useMutation({
     onSuccess: () => {
       person_query.refetch();
     }
   });
-  const home_list_query = trpc.home.list.useQuery();
+
   const deleteHomeFromPerson_mutation = trpc.home.delete.useMutation({
     onSuccess: () => {
       person_query.refetch();
@@ -32,9 +35,6 @@ export function PersonsDetailsPage() {
       <h3>Number of houses: {person_query.data?.homes.length}</h3>
       <p>{person_query.data?.bio}</p>
       {person_query.data?.homes.map((home, index) => {
-        //add the current home ids to the homesArr
-        if (homesArr.indexOf(home.id) === -1)
-          setHomesArr([...homesArr, home.id]);
         return (
           <div key={index}>
             address = {home.address} - rooms = {home.rooms} - {home.id}
@@ -73,10 +73,10 @@ export function PersonsDetailsPage() {
             <option>Please select</option>
             {home_list_query.data.map((home, index) => {
               //ensure that only the list of homes that haven't already been added appear
-              if (homesArr.indexOf(home.id) !== -1) return;
+
               return (
                 <option key={index} value={home.id}>
-                  city:{home.city} - address:{home.address} - rooms:{home.rooms}
+                  address:{home.address} - rooms:{home.rooms}
                 </option>
               );
             })}

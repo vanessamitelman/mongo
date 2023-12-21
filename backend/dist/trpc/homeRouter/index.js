@@ -18,6 +18,16 @@ exports.homeRouter = (0, trpc_1.router)({
         const homes = yield connection_1.prismaDB.home.findMany();
         return homes;
     })),
+    listShort: trpc_1.publicProcedure.query(() => __awaiter(void 0, void 0, void 0, function* () {
+        const homes = yield connection_1.prismaDB.home.findMany({
+            select: {
+                id: true,
+                address: true,
+                rooms: true
+            }
+        });
+        return homes;
+    })),
     get: trpc_1.publicProcedure.input(zod_1.z.string()).query((opts) => __awaiter(void 0, void 0, void 0, function* () {
         const home = yield connection_1.prismaDB.home.findUnique({
             where: {

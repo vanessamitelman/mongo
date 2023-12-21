@@ -1,12 +1,24 @@
 import { z } from 'zod';
 import { prismaDB } from '../../connection';
 import { publicProcedure, router } from '../trpc';
+import { tr } from '@faker-js/faker';
 
 export const homeRouter = router({
   list: publicProcedure.query(async () => {
     const homes = await prismaDB.home.findMany();
     return homes;
   }),
+  listShort: publicProcedure.query(async () => {
+    const homes = await prismaDB.home.findMany({
+      select: {
+        id: true,
+        address: true,
+        rooms: true
+      }
+    });
+    return homes;
+  }),
+
   get: publicProcedure.input(z.string()).query(async (opts) => {
     const home = await prismaDB.home.findUnique({
       where: {

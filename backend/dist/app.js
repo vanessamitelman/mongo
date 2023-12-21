@@ -25,27 +25,34 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const trpcExpress = __importStar(require("@trpc/server/adapters/express"));
 const index_1 = require("./trpc/index");
+const path_1 = __importDefault(require("path"));
 // import { insertDataPersonAndHomes } from './scripts/insertDataPersonAndHomes';
 // insertDataPersonAndHomes(2)
 const app = (0, express_1.default)(); // create the server and save the ref in the app variable
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:5173']
+    origin: '*'
 }));
-app.listen(3302, () => {
-    console.log('listening on 3302');
-});
 app.use('/trpc', trpcExpress.createExpressMiddleware({
     router: index_1.appRouter
     // createContext,
 }));
-app.get('/', (req, res) => {
-    res.send({
-        message: 'started my project'
-    });
+// app.get('/', (req, res) => {
+//   res.send({
+//     message: 'started my project'
+//   });
+// });
+app.use(express_1.default.static(path_1.default.join(__dirname, '../client')));
+app.get('*', (req, res) => {
+    res.sendFile(path_1.default.join(__dirname, '../client/index.html'));
+});
+app.listen((_b = (_a = process === null || process === void 0 ? void 0 : process.env) === null || _a === void 0 ? void 0 : _a.PORT) !== null && _b !== void 0 ? _b : 3301, () => {
+    var _a, _b;
+    console.log((_b = 'listening on 3301' + ((_a = process === null || process === void 0 ? void 0 : process.env) === null || _a === void 0 ? void 0 : _a.PORT)) !== null && _b !== void 0 ? _b : 3301);
 });
