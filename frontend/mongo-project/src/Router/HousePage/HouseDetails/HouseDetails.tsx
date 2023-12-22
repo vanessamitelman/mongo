@@ -1,27 +1,26 @@
-import { NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { trpc } from '../../../trpc';
-import { useForm } from 'react-hook-form';
-import { Dialog } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import {
   dialogStatusAtom,
   homeAtom,
   idAtom,
-  isLoadingAtom,
   personListAtom
 } from '../../../store/jotai';
 import { AddPersonDialog } from '../../../components/house/houseDetails/addPersonDialog';
+import { HouseDetailsMain } from '../../../components/house/houseDetails/houseMain';
 
 export function HouseDetailsPage() {
   const { id } = useParams();
-  const [__, setHomeId] = useAtom(idAtom);
+  const [homeId, setHomeId] = useAtom(idAtom);
   const [home, setHome] = useAtom(homeAtom);
   const [personList, setPersonList] = useAtom(personListAtom);
   const [_, setOpenDialog] = useAtom(dialogStatusAtom);
 
-  const home_details_query = trpc.home.get.useQuery(id ?? '');
+  const home_details_query = trpc.home.get.useQuery(homeId ?? '');
   const person_list_query = trpc.person.list.useQuery();
+
   useEffect(() => {
     setHomeId(id);
   }, []);
@@ -41,22 +40,7 @@ export function HouseDetailsPage() {
 
   return (
     <main>
-      <h1>House Details</h1>
-      {home.address}
-      <hr />
-      {home.city}
-      <hr />
-
-      {home.persons?.length === 0 ? (
-        <div>no people in home</div>
-      ) : (
-        <div>persons:</div>
-      )}
-      {home.persons?.map((person, index) => (
-        <pre key={index}>
-          <NavLink to={`/persons/${person.id}`}>{person.name}</NavLink>
-        </pre>
-      ))}
+      <HouseDetailsMain />
       <AddPersonDialog />
       <button onClick={() => setOpenDialog(true)}>Add Person</button>
     </main>

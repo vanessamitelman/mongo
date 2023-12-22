@@ -1,14 +1,14 @@
 import { useAtom } from 'jotai';
 import { dialogStatusAtom, idAtom, personListAtom } from '../../../store/jotai';
-import { Dialog } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import { trpc } from '../../../trpc';
 import { useForm } from 'react-hook-form';
 import { PersonListSelect } from './personListSelect';
 
 export function AddPersonDialog() {
   const [openDialog, setOpenDialog] = useAtom(dialogStatusAtom);
-  const [homeId, setHomeId] = useAtom(idAtom);
-  const [personList, setPersonList] = useAtom(personListAtom);
+  const [homeId, _] = useAtom(idAtom);
+  const [personList, __] = useAtom(personListAtom);
 
   const home_details_query = trpc.home.get.useQuery(homeId ?? '');
 
@@ -17,35 +17,35 @@ export function AddPersonDialog() {
       home_details_query.refetch();
     }
   });
-  const {
-    handleSubmit,
-    register,
-    formState: { errors }
-  } = useForm<{ person_id: string }>();
+  const { handleSubmit, register } = useForm<{ person_id: string }>();
   return (
     <main>
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <div style={{ width: '50vw', height: '50vh' }}>
-          <form
-            onSubmit={handleSubmit((data) => {
-              console.log(data);
+        <form
+          onSubmit={handleSubmit((data) => {
+            console.log(data);
 
-              const index_of_person = personList.findIndex(
-                (person) => person.id === data.person_id
-              );
-              const person = personList[index_of_person];
-              house_query_add.mutate({
-                person_id: data.person_id,
-                name: person.name,
-                home_id: home_details_query.data?.id ?? ''
-              });
-            })}
-          >
-            <PersonListSelect register={register} errors={errors} />
-            <button type='submit'>Submit</button>
-          </form>
-          <button onClick={() => setOpenDialog(false)}>Close</button>
-        </div>
+            const index_of_person = personList.findIndex(
+              (person) => person.id === data.person_id
+            );
+            const person = personList[index_of_person];
+            house_query_add.mutate({
+              person_id: data.person_id,
+              name: person.name,
+              home_id: home_details_query.data?.id ?? ''
+            });
+          })}
+        >
+          <DialogContent>
+            <PersonListSelect register={register} />
+          </DialogContent>
+          <DialogActions>
+            <Button type='submit' onClick={() => setOpenDialog(false)}>
+              Add Person
+            </Button>
+            <Button onClick={() => setOpenDialog(false)}>close</Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </main>
   );
